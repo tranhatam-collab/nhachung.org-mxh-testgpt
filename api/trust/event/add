@@ -1,0 +1,12 @@
+{
+  "member_id": "mem_xxx",
+  "project_id": "prj_xxx",
+  "event_type": "commitment_done_on_time",
+  "ref_id": "commit_xxx",
+  "params": { "difficulty": 3 },
+  "created_by": "member:mem_verifier",
+  "verify": {
+    "mode": "single",
+    "verifiers": ["mem_verifier"]
+  }
+}
