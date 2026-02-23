@@ -1,0 +1,142 @@
+{
+  "version": "1.0.0",
+  "weights": {
+    "rs": 1.0,
+    "cs": 0.8,
+    "is": 1.2
+  },
+  "base": {
+    "max": 25,
+    "items": {
+      "profile_verified_email": 5,
+      "profile_verified_phone": 5,
+      "twofa_enabled": 10,
+      "profile_complete": 5
+    }
+  },
+  "caps": {
+    "monthly": {
+      "cs": 60,
+      "rs": 60,
+      "bonus": 20,
+      "total": 140
+    },
+    "components": {
+      "labor": 30,
+      "capital": 30,
+      "asset": 30,
+      "knowledge": 20,
+      "peer": 10,
+      "milestone": 10,
+      "invited": 6
+    }
+  },
+  "decay": {
+    "enabled": true,
+    "monthly_percent": 2,
+    "monthly_max_points": 10,
+    "no_positive_event_days_threshold": 30
+  },
+  "integrity": {
+    "max": 150,
+    "start": 150,
+    "recovery": {
+      "per_clean_30_days": 5,
+      "max": 150
+    }
+  },
+  "levels": {
+    "1": {
+      "name": "participant",
+      "min_ts": 0,
+      "requirements": {
+        "min_rs": 0,
+        "min_completed_commitments": 0,
+        "max_failure_rate": 1.0,
+        "no_open_disputes": false,
+        "no_major_dispute_days": 0
+      }
+    },
+    "2": {
+      "name": "contributor",
+      "min_ts": 50,
+      "requirements": {
+        "min_rs": 40,
+        "min_completed_commitments": 3,
+        "max_failure_rate": 0.3,
+        "no_open_disputes": false,
+        "no_major_dispute_days": 0
+      }
+    },
+    "3": {
+      "name": "coordinator",
+      "min_ts": 150,
+      "requirements": {
+        "min_rs": 120,
+        "min_completed_commitments": 10,
+        "max_failure_rate": 0.15,
+        "no_open_disputes": true,
+        "no_major_dispute_days": 180
+      }
+    },
+    "4": {
+      "name": "core",
+      "min_ts": 300,
+      "requirements": {
+        "min_rs": 220,
+        "min_completed_commitments": 25,
+        "max_failure_rate": 0.1,
+        "no_open_disputes": true,
+        "no_major_dispute_days": 365
+      }
+    }
+  },
+  "verification": {
+    "capital_asset_double_verify": true,
+    "double_verify_reduction_factor": 0.3,
+    "who_can_verify": {
+      "level2": { "labor_hours_max": 5, "monthly_events_max": 5 },
+      "level3": { "monthly_events_max": 60 },
+      "level4": { "monthly_events_max": 120 },
+      "admin": { "monthly_events_max": 1000 }
+    }
+  },
+  "events": {
+    "profile_verified_email": { "kind": "base", "delta": 5, "component": "base", "positive": true, "needs_verify": false },
+    "profile_verified_phone": { "kind": "base", "delta": 5, "component": "base", "positive": true, "needs_verify": false },
+    "twofa_enabled": { "kind": "base", "delta": 10, "component": "base", "positive": true, "needs_verify": false },
+    "profile_complete": { "kind": "base", "delta": 5, "component": "base", "positive": true, "needs_verify": false },
+
+    "commitment_done_on_time": { "kind": "rs", "delta": 15, "component": "rs", "positive": true, "needs_verify": true, "params": { "difficulty_min": 1, "difficulty_max": 5, "difficulty_step_bonus": 0.1 } },
+    "commitment_done_late": { "kind": "rs", "delta": 8, "component": "rs", "positive": true, "needs_verify": true, "params": { "late_days_tiers": [[1, 3, 8], [4, 7, 4], [8, 9999, 1]] } },
+    "commitment_failed": { "kind": "risk", "delta": -20, "component": "risk", "positive": false, "needs_verify": true },
+    "commitment_abandoned": { "kind": "risk", "delta": -30, "component": "risk", "positive": false, "needs_verify": true },
+    "commitment_harm": { "kind": "risk", "delta": -50, "component": "risk", "positive": false, "needs_verify": true },
+
+    "contrib_labor_verified": { "kind": "cs", "delta": 1, "component": "labor", "positive": true, "needs_verify": true, "params": { "per_hour": 1, "role_multipliers": { "member": 1.0, "mentor": 1.2, "lead": 1.3, "ops": 1.4 } } },
+    "contrib_knowledge_verified": { "kind": "cs", "delta": 6, "component": "knowledge", "positive": true, "needs_verify": true, "params": { "min": 3, "max": 10 } },
+    "contrib_asset_verified": { "kind": "cs", "delta": 15, "component": "asset", "positive": true, "needs_verify": true, "params": { "min": 10, "max": 25 } },
+    "contrib_capital_verified": { "kind": "cs", "delta": 0, "component": "capital", "positive": true, "needs_verify": true, "params": { "unit": "million_vnd", "formula": "round(2*ln(1+amount))", "cap_monthly": 30 } },
+
+    "milestone_completed": { "kind": "cs", "delta": 5, "component": "milestone", "positive": true, "needs_verify": true },
+    "peer_helpful": { "kind": "bonus", "delta": 2, "component": "peer", "positive": true, "needs_verify": true, "params": { "same_project_min_days": 14, "pair_max_per_month": 1, "min_verifier_ts": 120 } },
+
+    "invited_by_trusted": { "kind": "bonus", "delta": 3, "component": "invited", "positive": true, "needs_verify": true },
+
+    "dispute_opened_against": { "kind": "risk", "delta": -10, "component": "risk", "positive": false, "needs_verify": true },
+    "dispute_resolved_minor": { "kind": "risk", "delta": -25, "component": "risk", "positive": false, "needs_verify": true },
+    "dispute_resolved_major": { "kind": "risk", "delta": -50, "component": "risk", "positive": false, "needs_verify": true },
+
+    "toxic_confirmed": { "kind": "risk", "delta": -40, "component": "risk", "positive": false, "needs_verify": true },
+    "fraud_confirmed": { "kind": "risk", "delta": -150, "component": "risk", "positive": false, "needs_verify": true },
+
+    "score_gaming": { "kind": "risk", "delta": -30, "component": "risk", "positive": false, "needs_verify": true }
+  },
+  "flags": {
+    "R1_unverified_heavy": { "min_self_claim_ratio": 0.7, "window_days": 90 },
+    "R2_delay_pattern": { "late_count_threshold": 3, "window_days": 90 },
+    "R3_dispute_exposure": { "open_disputes_threshold": 1 },
+    "R4_ring_behavior": { "pair_events_threshold": 3, "window_days": 60 },
+    "R5_capital_dominance": { "capital_share_threshold": 0.7, "window_days": 90 }
+  }
+}
